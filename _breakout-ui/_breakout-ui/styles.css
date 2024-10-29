@@ -1,0 +1,628 @@
+/* Global background style */
+body {
+    background-color: #000320;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Base radial gradient - darker edges */
+.bg-base {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(ellipse at center,
+        rgb(0, 102, 195) 0%,    /* Dimmed bright blue */
+        rgb(0, 53, 144) 25%,    /* Darker medium blue */
+        rgb(10, 0, 100) 50%,    /* Darker deep blue */
+        rgb(20, 0, 40) 75%,     /* Darker purple */
+        rgb(0, 1, 10) 100%      /* Much darker edges */
+    );
+    z-index: 1;
+}
+
+/* Purple cloud overlays */
+.bg-clouds {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(ellipse at 25% 50%,
+            rgba(80, 0, 120, 0.2) 0%,    /* Dimmed purple */
+            transparent 60%
+        ),
+        radial-gradient(ellipse at 75% 50%,
+            rgba(0, 10, 120, 0.2) 0%,    /* Dimmed blue */
+            transparent 60%
+        );
+    z-index: 2;
+    mix-blend-mode: soft-light;
+    filter: blur(50px);
+}
+
+/* Grid overlay with animations (removed glitch) */
+.bg-grid {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('images/grid.svg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    z-index: 3;
+    mix-blend-mode: screen;
+    animation: gridEffect 8s ease-in-out infinite;
+    filter: brightness(0.8) contrast(1.2) saturate(1.2);
+}
+
+@keyframes gridEffect {
+    0% {
+        filter: brightness(0.6) contrast(1.2) saturate(1) hue-rotate(0deg);
+        opacity: 0.6;
+        transform: scale(1);
+    }
+    50% {
+        filter: brightness(1.8) contrast(1.6) saturate(1.4) hue-rotate(280deg);
+        opacity: 1;
+        transform: scale(1.02);
+    }
+    100% {
+        filter: brightness(0.6) contrast(1.2) saturate(1) hue-rotate(0deg);
+        opacity: 0.6;
+        transform: scale(1);
+    }
+}
+
+/* Enhanced glow effect for the grid */
+.bg-grid::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    filter: blur(2px);
+    opacity: 0.4;
+    mix-blend-mode: screen;
+    animation: gridGlow 8s ease-in-out infinite;
+    transform: scale(1.05);  /* Slightly larger than the original */
+}
+
+@keyframes gridGlow {
+    0%, 100% {
+        opacity: 0.2;
+        filter: blur(2px) brightness(1);
+    }
+    50% {
+        opacity: 0.6;
+        filter: blur(3px) brightness(1.5);
+    }
+}
+
+/* Add a scan line effect */
+.scan-lines {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to bottom,
+        transparent 50%,
+        rgba(0, 50, 255, 0.02) 50%
+    );
+    background-size: 100% 4px;
+    z-index: 999;
+    pointer-events: none;
+    opacity: 0.4;
+    mix-blend-mode: screen;
+}
+
+/* Add a vignette effect */
+.vignette {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+        circle at center,
+        transparent 40%,
+        rgba(0, 0, 40, 0.4) 100%
+    );
+    z-index: 998;
+    pointer-events: none;
+}
+
+@keyframes cloudMove {
+    0%, 100% {
+        transform: translateX(0) scale(1);
+        filter: blur(40px);
+    }
+    50% {
+        transform: translateX(3%) scale(1.05);
+        filter: blur(35px);
+    }
+}
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    pointer-events: none;
+    background-color: transparent;
+    mix-blend-mode: screen;
+}
+
+/* Purple overlay - let's debug with a background color first */
+.bg-purple {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('images/purple.svg');
+    background-color: rgba(255, 0, 255, 0.1); /* Debug color */
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    z-index: 2.5;
+    opacity: 1;
+}
+
+/* Loading animation styles */
+.loading-container {
+    position: fixed;
+    width: 100%;
+    max-width: 390px;
+    height: 700px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2000;
+    pointer-events: all;
+    display: flex;
+    flex-direction: column;
+}
+
+.loading-content {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 0;
+    background: rgba(0, 0, 0, 0.4);
+    animation: expandContent 0.4s ease-out forwards;
+    pointer-events: all;
+    overflow: hidden;
+}
+
+.loading-bar {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px;  /* Slightly thicker */
+    background: rgb(0, 255, 255);  /* Brighter teal */
+    box-shadow: 
+        0 0 5px rgba(0, 255, 255, 0.8),
+        0 0 10px rgba(0, 255, 255, 0.6),
+        0 0 15px rgba(0, 255, 255, 0.4),
+        0 0 20px rgba(0, 255, 255, 0.3),
+        0 0 25px rgba(0, 255, 255, 0.2),
+        /* Inner glow */
+        inset 0 0 10px rgba(0, 255, 255, 0.8),
+        inset 0 0 20px rgba(0, 255, 255, 0.4);
+    animation: neonPulse 1.5s ease-in-out infinite alternate;
+}
+
+.loading-bar.top {
+    top: 50%;
+    animation: expandTop 0.4s ease-out forwards; /* Reduced from 0.8s to 0.4s */
+}
+
+.loading-bar.bottom {
+    top: 50%;
+    animation: expandBottom 0.4s ease-out forwards; /* Reduced from 0.8s to 0.4s */
+}
+
+@keyframes expandTop {
+    from {
+        transform: translateY(0);
+    }
+    to {
+        transform: translateY(-350px); /* Half of new container height */
+    }
+}
+
+@keyframes expandBottom {
+    from {
+        transform: translateY(0);
+    }
+    to {
+        transform: translateY(350px); /* Half of new container height */
+    }
+}
+
+@keyframes expandContent {
+    from {
+        height: 0;
+        top: 50%;
+    }
+    to {
+        height: 700px; /* Match new container height */
+        top: 0;
+    }
+}
+
+/* Add pulsing glow animation */
+@keyframes neonPulse {
+    from {
+        box-shadow: 
+            0 0 5px rgba(0, 255, 255, 0.8),
+            0 0 10px rgba(0, 255, 255, 0.6),
+            0 0 15px rgba(0, 255, 255, 0.4),
+            0 0 20px rgba(0, 255, 255, 0.3),
+            0 0 25px rgba(0, 255, 255, 0.2),
+            inset 0 0 10px rgba(0, 255, 255, 0.8),
+            inset 0 0 20px rgba(0, 255, 255, 0.4);
+    }
+    to {
+        box-shadow: 
+            0 0 10px rgba(0, 255, 255, 0.9),
+            0 0 20px rgba(0, 255, 255, 0.7),
+            0 0 30px rgba(0, 255, 255, 0.5),
+            0 0 40px rgba(0, 255, 255, 0.4),
+            0 0 50px rgba(0, 255, 255, 0.3),
+            inset 0 0 20px rgba(0, 255, 255, 0.9),
+            inset 0 0 40px rgba(0, 255, 255, 0.5);
+    }
+}
+
+/* Update code block styles */
+.code-block {
+    position: fixed;
+    font-family: monospace;
+    font-size: 8px; /* Smaller text */
+    color: rgba(0, 255, 255, 0.15); /* More subtle */
+    line-height: 1.2;
+    pointer-events: none;
+    white-space: pre;
+    z-index: 900;
+}
+
+/* Left side code blocks */
+.code-block-left-1 {
+    top: 0;
+    left: 2%;
+    animation: codeScroll 20s linear infinite;
+}
+
+.code-block-left-2 {
+    top: -50%;
+    left: 5%;
+    animation: codeScroll 25s linear infinite 5s;
+}
+
+/* Right side code blocks */
+.code-block-right-1 {
+    top: -30%;
+    right: 2%;
+    animation: codeScroll 22s linear infinite 2s;
+}
+
+.code-block-right-2 {
+    top: -80%;
+    right: 5%;
+    animation: codeScroll 28s linear infinite 8s;
+}
+
+@keyframes codeScroll {
+    from {
+        transform: translateY(100vh);
+        opacity: 0;
+    }
+    5% {
+        opacity: 0.15;
+    }
+    95% {
+        opacity: 0.15;
+    }
+    to {
+        transform: translateY(-100vh);
+        opacity: 0;
+    }
+}
+
+/* Add to your HTML */
+
+/* Add Source Sans Pro font */
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@700&display=swap');
+
+/* Menu container styles */
+.menu-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 15px 20px 30px;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    z-index: 2001;
+    opacity: 0;
+    animation: revealMenu 0.3s ease-out forwards;
+    animation-delay: 0.3s;
+}
+
+/* Menu options grid */
+.menu-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    width: 100%;
+}
+
+/* Make the Start New Game button span full width */
+.menu-item-large {
+    grid-column: span 2;
+    padding: 20px 20px;
+    margin-bottom: 8px;
+    animation-delay: 0.35s;
+}
+
+/* Basic button styles - increase background opacity */
+.menu-item {
+    background: linear-gradient(
+        135deg,
+        rgba(6, 7, 25, 0.95) 0%,    /* Increased from 0.85 */
+        rgba(10, 0, 30, 0.95) 100%  /* Increased from 0.85 */
+    );
+    border: 1px solid rgba(85, 165, 252, 0.1);
+    border-radius: 16px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: slideUpFade 0.4s ease-out forwards;
+}
+
+/* Sci-fi hover effect */
+.menu-item::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #55A5FC, #00FFE7);
+    z-index: -1;
+    border-radius: 17px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.menu-item:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(
+        135deg,
+        rgba(180, 190, 255, 0.15) 0%,    /* Light silvery blue */
+        rgba(140, 160, 255, 0.15) 50%,    /* Mid silvery blue */
+        rgba(100, 120, 255, 0.15) 100%    /* Darker blue */
+    );
+    border: 1px solid rgba(180, 200, 255, 0.4);
+    box-shadow: 
+        0 0 20px rgba(100, 150, 255, 0.15),   /* Outer glow */
+        inset 0 0 40px rgba(140, 180, 255, 0.1);  /* Inner glow */
+}
+
+.menu-item:hover::before {
+    opacity: 1;
+}
+
+/* Add corner accents */
+.menu-item::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+        linear-gradient(to right, transparent 0%, rgba(140, 180, 255, 0.1) 100%) top right / 50% 1px,
+        linear-gradient(to bottom, transparent 0%, rgba(140, 180, 255, 0.1) 100%) top right / 1px 50%,
+        linear-gradient(to left, transparent 0%, rgba(140, 180, 255, 0.1) 100%) bottom left / 50% 1px,
+        linear-gradient(to top, transparent 0%, rgba(140, 180, 255, 0.1) 100%) bottom left / 1px 50%;
+    background-repeat: no-repeat;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.menu-item:hover::after {
+    opacity: 1;
+}
+
+/* Enhanced text hover effect */
+.menu-item:hover .menu-text {
+    color: rgba(220, 230, 255, 1);  /* Brighter text */
+    transform: scale(1.02);
+    letter-spacing: 2.5px;
+    text-shadow: 0 0 10px rgba(180, 200, 255, 0.5);
+}
+
+/* Enhanced icon hover effect */
+.menu-item:hover .menu-icon {
+    transform: scale(1.05);
+    filter: 
+        brightness(1.2)
+        drop-shadow(0 0 8px rgba(140, 180, 255, 0.4));
+}
+
+/* Adjust large menu item (Start New Game) */
+.menu-item-large {
+    grid-column: span 2;
+    padding: 20px 20px;
+    background: linear-gradient(
+        135deg,
+        rgba(6, 7, 25, 0.95) 0%,
+        rgba(10, 0, 30, 0.95) 100%
+    );
+}
+
+.menu-item-large .cityscape-img {
+    width: 130%;
+    margin: -8% -15%;
+    transform: translateY(0);
+}
+
+/* Image styles */
+.cityscape-img {
+    width: 140%;
+    margin: -20% -20%;
+    transform: translateY(-10%);
+}
+
+.menu-icon {
+    width: 48px;
+    height: 48px;
+    transition: all 0.3s ease;
+}
+
+/* Text styles */
+.menu-text {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: #55A5FC;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.menu-item-large .menu-text {
+    font-size: 22px;
+    background: linear-gradient(to right, #55A5FC, #00FFE7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: all 0.3s ease;
+}
+
+.menu-item-large:hover .menu-text {
+    filter: brightness(1.2);
+    letter-spacing: 3px;
+    text-shadow: 
+        0 0 15px rgba(140, 180, 255, 0.4),
+        0 0 30px rgba(140, 180, 255, 0.2);
+}
+
+@keyframes revealMenu {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUpFade {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.menu-item:nth-child(2) {
+    animation-delay: 0.4s;
+}
+
+.menu-item:nth-child(3) {
+    animation-delay: 0.45s;
+}
+
+.menu-item:nth-child(4) {
+    animation-delay: 0.5s;
+}
+
+.menu-item:nth-child(5) {
+    animation-delay: 0.55s;
+}
+
+/* Remove any bright borders or glows */
+.menu-item::before,
+.menu-item::after {
+    display: none;
+}
+
+/* Logo styles */
+.logo-container {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 0 20px;
+}
+
+.logo {
+    width: 160px;
+    height: auto;
+    margin: 0 auto;
+    margin-bottom: 10px;
+}
+
+/* Add tech border effect on hover */
+.menu-item::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: linear-gradient(
+        45deg,
+        transparent 0%,
+        rgba(180, 185, 255, 0.1) 15%,
+        rgba(140, 180, 255, 0.3) 50%,
+        rgba(180, 185, 255, 0.1) 85%,
+        transparent 100%
+    );
+    border-radius: 16px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.menu-item:hover::before {
+    opacity: 1;
+}
+
+/* Special hover effect for Start New Game */
+.menu-item-large:hover {
+    background: linear-gradient(
+        135deg,
+        rgba(180, 190, 255, 0.2) 0%,
+        rgba(140, 160, 255, 0.2) 50%,
+        rgba(100, 120, 255, 0.2) 100%
+    );
+}
+
+.menu-item-large:hover .menu-text {
+    filter: brightness(1.2);
+    letter-spacing: 3px;
+    text-shadow: 
+        0 0 15px rgba(140, 180, 255, 0.4),
+        0 0 30px rgba(140, 180, 255, 0.2);
+}
