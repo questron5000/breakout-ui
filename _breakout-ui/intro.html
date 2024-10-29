@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breakout</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000320;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Source Sans Pro', sans-serif;
+        }
+
+        .intro-container {
+            text-align: center;
+        }
+
+        .logo {
+            width: 300px;
+            height: auto;
+            margin-bottom: 40px;
+        }
+
+        .begin-button {
+            background: linear-gradient(
+                135deg,
+                rgba(6, 7, 25, 0.95) 0%,
+                rgba(10, 0, 30, 0.95) 100%
+            );
+            border: 1px solid rgba(85, 165, 252, 0.3);
+            border-radius: 12px;
+            padding: 15px 40px;
+            color: #55A5FC;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .begin-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 0 30px rgba(85, 165, 252, 0.2),
+                inset 0 0 20px rgba(85, 165, 252, 0.1);
+            border-color: rgba(85, 165, 252, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <!-- Preload audio -->
+    <audio id="bgMusic" preload="auto">
+        <source src="sounds/background.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="intro-container">
+        <img src="images/logo.svg" alt="Breakout Logo" class="logo">
+        <button class="begin-button" onclick="startGame()">Begin</button>
+    </div>
+
+    <script>
+        function startGame() {
+            // Start playing background music
+            const bgMusic = document.getElementById('bgMusic');
+            bgMusic.volume = 0.5;
+            bgMusic.play()
+                .then(() => {
+                    // Only redirect after music starts playing
+                    window.location.href = 'index.html';
+                })
+                .catch(e => {
+                    console.log("Audio failed to play:", e);
+                    // Redirect anyway if audio fails
+                    window.location.href = 'index.html';
+                });
+        }
+    </script>
+</body>
+</html> 
