@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tailwind + Star Animation</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="min-h-screen">
+    <!-- Add audio element -->
+    <audio id="bgMusic" autoplay loop>
+        <source src="sounds/background.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="bg-base"></div>
+    <div class="bg-clouds"></div>
+    <div class="bg-purple"></div>
+    <div class="bg-grid"></div>
+    <div class="bg-pulse"></div>
+    <div class="scan-lines"></div>
+    <div class="vignette"></div>
+    <canvas id="starfield"></canvas>
+
+    <!-- Add script to handle autoplay -->
+    <script>
+        // Handle autoplay
+        const audio = document.getElementById('bgMusic');
+        audio.volume = 0.5; // Set volume to 50%
+        
+        // Many browsers require user interaction before playing audio
+        document.addEventListener('click', () => {
+            audio.play().catch(e => console.log("Audio play failed:", e));
+        });
+
+        // Rest of your existing script...
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+
+        // Set canvas size to window size
+        function setCanvasSize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        setCanvasSize();
+        window.addEventListener('resize', setCanvasSize);
+
+        // Star class
+        class Star {
+            constructor() {
+                this.reset();
+                
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.z = Math.random() * 1500; // depth
+                this.size = 1;
+                this.speed = Math.random() * 0.8 + 0.4;
+                this.brightness = Math.random() * 0.7 + 0.3;
+            }
+
+            update() {
+                this.z -= this.speed;
+                if (this.z <= 0) {
+                    this.reset();
+                }
+
+                // Calculate perspective
+                this.screenX = (this.x - canvas.width/2) * (600/this.z) + canvas.width/2;
+                this.screenY = (this.y - canvas.height/2) * (600/this.z) + canvas.height/2;
+                
+                // Size based on depth
+                this.screenSize = Math.max(0.5, (1500 - this.z) / 1500 * 3);
+                
+                // Brightness based on depth
+                this.brightness = Math.min(1, (1500 - this.z) / 1500 + 0.2);
+            }
+
+            draw() {
+                const gradient = ctx.createRadialGradient(
+                    this.screenX, this.screenY, 0,
+                    this.screenX, this.screenY, this.screenSize * 2.5
+                );
+                
+                gradient.addColorStop(0, `rgba(255, 255, 255, ${this.brightness * 1.2})`);
+                gradient.addColorStop(0.1, `rgba(150, 220, 255, ${this.brightness * 0.6})`);
+                gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(this.screenX, this.screenY, this.screenSize * 2.5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // Create stars
+        const stars = Array(200).fill().map(() => new Star());
+
+        // Animation loop
+        function animate() {
+            // Clear the canvas completely instead of adding a black layer
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            stars.forEach(star => {
+                star.update();
+                star.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html> 
